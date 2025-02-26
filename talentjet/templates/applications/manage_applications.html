@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Applications | TalentJet{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Manage Job Applications</h2>
+    </div>
+    <div class="card-body">
+        {% if applications %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Applicant</th>
+                        <th>Applied On</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td><a href="{% url 'job_detail' application.job.pk %}">{{ application.job.title }}</a></td>
+                            <td>{{ application.applicant.username }}</td>
+                            <td>{{ application.applied_at|date:"F d, Y" }}</td>
+                            <td>
+                                {% if application.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif application.status == 'accepted' %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif application.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if application.status == 'pending' %}
+                                <div class="btn-group" role="group">
+                                  <a href="{% url 'accept_application' application.id %}" class="btn btn-sm btn-success">Accept</a>
+                                  <a href="{% url 'reject_application' application.id %}" class="btn btn-sm btn-danger">Reject</a>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">Processed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No applications to manage.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

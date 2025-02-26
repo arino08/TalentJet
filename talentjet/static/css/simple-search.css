@@ -1,0 +1,147 @@
+/* Simple search bar styling inspired by StackOverflow example */
+
+/* Search container */
+.search-container {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* Hero section styling */
+.hero-section {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  padding: 2rem;
+  position: relative;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  color: white;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 2rem;
+}
+
+/* Search bar styling */
+.search-bar {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  padding: 0.5rem;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.search-bar:hover {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.15);
+  transform: scale(1.02);
+}
+
+.search-text {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  height: 100%;
+  width: 100%;
+  border-radius: 50px;
+  font-size: 1.25rem;
+  color: white;
+  font-weight: 500;
+}
+
+.search-text::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.search-text:focus {
+  outline: none;
+}
+
+/* Search button */
+.search-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  margin-right: 0.5rem;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  /* transform: translateY(-2px); */
+}
+
+/* Search icon */
+.search-icon {
+  height: 20px;
+  width: 20px;
+  fill: currentColor;
+}
+
+/* Popular searches */
+.popular-searches {
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.popular-searches a {
+  color: white;
+  text-decoration: none;
+  margin: 0 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: 0.2s;
+}
+
+.popular-searches a:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .search-bar {
+    flex-direction: column;
+  }
+
+  .search-text {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .search-button {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0;
+  }
+}

@@ -1,0 +1,155 @@
+/* Search functionality styling */
+
+/* The search overlay that covers the entire page */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    z-index: 1000;
+}
+
+/* Show overlay when search is focused */
+.search-focused .search-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Base search form styling */
+.mega-search-form {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1001;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                left 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Search form wrapper */
+.mega-search-wrapper {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 0.75rem;
+    display: flex;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: all 0.4s ease;
+}
+
+/* Input field */
+.mega-search-input {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    font-size: 1.25rem;
+    border: none;
+    background: transparent;
+    color: #1e293b;
+}
+
+.mega-search-input:focus {
+    outline: none;
+}
+
+/* Search button */
+.mega-search-button {
+    padding: 1rem 2rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.mega-search-button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* Position the form in the center when focused */
+.search-focused .mega-search-form {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90%;
+    max-width: 800px;
+}
+
+/* Elevate the search wrapper when focused */
+.search-focused .mega-search-wrapper {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+/* Hide other elements when search is focused */
+.search-focused .hero-title,
+.search-focused .hero-subtitle,
+.search-focused .popular-searches {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Apply blur to content when search is focused */
+body.search-focused .hero-section,
+body.search-focused .content-section,
+body.search-focused .navbar,
+body.search-focused footer {
+    filter: blur(5px);
+    transition: filter 0.5s ease;
+}
+
+/* Ensure search elements are never blurred */
+body.search-focused #searchFormContainer,
+body.search-focused #searchForm,
+body.search-focused .mega-search-wrapper,
+body.search-focused .mega-search-input,
+body.search-focused .mega-search-button {
+    filter: none !important;
+    -webkit-filter: none !important;
+}
+
+/* Animation for search elevation */
+@keyframes elevate {
+    from {
+        transform: scale(1);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    to {
+        transform: scale(1.05);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.search-focused .mega-search-wrapper {
+    animation: elevate 0.4s forwards;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .search-focused .mega-search-form {
+        width: 95%;
+    }
+
+    .mega-search-wrapper {
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .mega-search-button {
+        width: 100%;
+        gap: 0.75rem;
+    }
+}

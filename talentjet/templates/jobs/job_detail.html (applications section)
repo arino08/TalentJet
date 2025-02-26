@@ -1,0 +1,54 @@
+{% if user.is_authenticated and user.role == 'recruiter' and user == job.recruiter %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Applications ({{ job.applications.count }})</h3>
+    </div>
+    <div class="card-body">
+        {% if job.applications.all %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Applied On</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in job.applications.all %}
+                        <tr>
+                            <td>{{ application.applicant.username }}</td>
+                            <td>{{ application.applied_at|date:"F d, Y" }}</td>
+                            <td>
+                                {% if application.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif application.status == 'accepted' %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif application.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if application.status == 'pending' %}
+                                    <div class="btn-group btn-group-sm">
+                                        <form method="post" action="{% url 'accept_application' application.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-sm me-1">Accept</button>
+                                        </form>
+                                        <form method="post" action="{% url 'reject_application' application.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No applications yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

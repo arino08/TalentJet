@@ -1,0 +1,200 @@
+/* Modern monochromatic styling for home page */
+
+/* Reset variables for monochromatic theme */
+:root {
+  --mono-dark: #121212;
+  --mono-medium-dark: #1e1e1e;
+  --mono-medium: #2d2d2d;
+  --mono-light: #f8f8f8;
+  --mono-accent: #e0e0e0;
+  --primary-color: #000;
+  --secondary-color: #333;
+  --text-color: #111;
+  --text-muted: #555;
+  --light-bg: #f9f9f9;
+  --border-color: #ddd;
+  --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --hover-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  --focus-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+}
+
+body {
+  color: var(--text-color);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Modern hero section styling */
+.hero-section {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mono-dark);
+  background: linear-gradient(135deg, var(--mono-dark) 0%, var(--mono-medium-dark) 100%);
+  padding: 2rem;
+  position: relative;
+  background-color: var(--light-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Add subtle grid pattern overlay for texture */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 1;
+}
+
+/* Content positioning */
+.search-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* Modern typography */
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: white;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 3rem;
+  font-weight: 300;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Keep search bar as is, but enhance slightly */
+.search-bar {
+  /* Existing styles preserved */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Modern card styling */
+.card {
+  background-color: white;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--box-shadow);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--hover-shadow);
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--mono-dark);
+}
+
+.card-text {
+  color: #555;
+}
+
+/* Button styling */
+/* Button styling */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.jumbotron {
+  background-color: transparent;
+  padding: 4rem 0;
+}
+
+.display-4 {
+}
+
+/* Form control focus styling */
+.form-control:focus {
+  box-shadow: var(--focus-shadow);
+  border-color: var(--secondary-color);
+}
+.display-4 {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Form control focus styling */
+.form-control:focus {
+  box-shadow: var(--focus-shadow);
+  border-color: var(--secondary-color);
+}
+
+/* Footer styling */
+footer {
+  background-color: var(--light-bg);
+}
+
+footer a:hover {
+  text-decoration: underline;
+  color: var(--secondary-color);
+  text-decoration: underline;
+
+}
+
+
+/* Hero title styling */
+.hero-title {
+  font-size: 2.8rem;
+}
+
+/* Responsive adjustments for hero title */
+/* Hero title responsive size override */
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 2.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+  }
+}
+.popular-searches a {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+.popular-searches a:hover {
+  text-decoration: underline;
+}

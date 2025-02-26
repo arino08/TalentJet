@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results | TalentJet{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filters</h5>
+                    <form method="get" action="{% url 'search_results' %}">
+                        <input type="hidden" name="q" value="{{ query }}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Job Type</label>
+                            <select name="job_type" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="full_time" {% if job_type == 'full_time' %}selected{% endif %}>Full Time</option>
+                                <option value="part_time" {% if job_type == 'part_time' %}selected{% endif %}>Part Time</option>
+                                <option value="contract" {% if job_type == 'contract' %}selected{% endif %}>Contract</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Experience Level</label>
+                            <select name="experience_level" class="form-select">
+                                <option value="">All Levels</option>
+                                <option value="entry" {% if experience_level == 'entry' %}selected{% endif %}>Entry Level</option>
+                                <option value="mid" {% if experience_level == 'mid' %}selected{% endif %}>Mid Level</option>
+                                <option value="senior" {% if experience_level == 'senior' %}selected{% endif %}>Senior Level</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" name="location" class="form-control" value="{{ location }}">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>{{ total_results }} Results for "{{ query }}"</h4>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Sort by
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="?q={{ query }}&sort=recent">Most Recent</a></li>
+                        <li><a class="dropdown-item" href="?q={{ query }}&sort=relevant">Most Relevant</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            {% for job in jobs %}
+            <div class="card mb-3 hover-shadow animate__animated animate__fadeIn">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title mb-1">{{ job.title }}</h5>
+                        <span class="text-muted small">{{ job.posted_at|timesince }} ago</span>
+                    </div>
+                    <p class="text-muted mb-2">{{ job.recruiter.company }}</p>
+                    <p class="card-text">{{ job.description|truncatewords:30 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="skills">
+                            {% for skill in job.required_skills.split %}
+                            <span class="badge bg-light text-dark me-1">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">No jobs found matching your criteria.</div>
+            {% endfor %}
+        </div>
+
+        <!-- Companies Sidebar -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Featured Companies</h5>
+                    {% for company in companies %}
+                    <div class="d-flex align-items-center mb-3 hover-shadow p-2 rounded">
+                        <div class="company-logo me-3">
+                            {% if company.logo %}
+                            <img src="{{ company.logo.url }}" alt="{{ company.company }}" class="rounded-circle" width="40">
+                            {% else %}
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                {{ company.company|make_list|first|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h6 class="mb-0">{{ company.company }}</h6>
+                            <small class="text-muted">{{ company.posted_jobs.count }} active jobs</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No companies found matching your criteria.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

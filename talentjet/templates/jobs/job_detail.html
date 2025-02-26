@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} | TalentJet{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="card-title">{{ job.title }}</h2>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-secondary me-2">Posted: {{ job.posted_at|date:"F d, Y" }}</span>
+                {% if user.is_authenticated and user == job.recruiter %}
+                    <a href="{% url 'delete_job' job.pk %}" class="btn btn-danger btn-sm">Delete Job</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <h5>Job Description</h5>
+        <p class="card-text">{{ job.description }}</p>
+
+        <h5>Required Skills</h5>
+        <p class="card-text">{{ job.required_skills }}</p>
+
+        <h5>Posted By</h5>
+        <p class="card-text">{{ job.recruiter.username }}</p>
+
+        {% if user.is_authenticated and user.role == 'job_seeker' %}
+        {% if user_has_applied %}
+            <div class="alert alert-info">
+                You have already applied for this job.
+            </div>
+        {% else %}
+            <form method="post" action="{% url 'apply_for_job' job.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Apply Now</button>
+            </form>
+        {% endif %}
+    {% endif %}
+    </div>
+</div>
+
+{% if user.is_authenticated and user.role == 'recruiter' and user == job.recruiter %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Applications ({{ job.applications.count }})</h3>
+    </div>
+    <div class="card-body">
+        {% if job.applications.all %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Applied On</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in job.applications.all %}
+                        <tr>
+                            <td>{{ application.applicant.username }}</td>
+                            <td>{{ application.applied_at|date:"F d, Y" }}</td>
+                            <td>{{ application.get_status_display }}</td>
+                            <td>
+                                <!-- Add actions like accept/reject here -->
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No applications yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

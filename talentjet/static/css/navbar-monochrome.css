@@ -1,0 +1,44 @@
+/* Monochromatic navbar styling */
+
+/* Navbar base style */
+.navbar {
+  background-color: transparent !important;
+  transition: background-color 0.3s ease;
+  padding: 1.2rem 0;
+}
+
+/* Scrolled state */
+.navbar.scrolled {
+  background-color: rgba(18, 18, 18, 0.98) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Brand styling */
+.navbar-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: white !important;
+}
+
+/* Nav links */
+.navbar-light .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.2s ease;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: white !important;
+}
+
+/* Toggler icon for mobile */
+.navbar-light .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Add scroll detection JavaScript */

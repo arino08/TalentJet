@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up | TalentJet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .page-content-wrapper {
+        padding-top: 1.5rem;
+    }
+
+    .auth-card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+    }
+
+    .auth-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        padding: 1.5rem 2rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0;
+        color: #111;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        color: #333;
+        transition: color 0.3s ease;
+    }
+
+    .form-control {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+        box-shadow: none;
+        background-color: #f9f9f9;
+        color: #222;
+    }
+
+    .form-control:focus {
+        border-color: #333;
+        box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+        outline: none;
+        background-color: #fff;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-text {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        color: #666;
+    }
+
+    .submit-btn {
+        background-color: #000;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 28px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        width: 100%;
+        color: #fff;
+    }
+
+    .submit-btn:hover {
+        background-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .errorlist {
+        list-style-type: none;
+        padding-left: 0;
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-link {
+        color: #000;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid transparent;
+    }
+
+    .auth-link:hover {
+        color: #333;
+        border-bottom: 1px solid #333;
+        text-decoration: none;
+    }
+
+    /* Animation for form fields */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-field {
+        animation: fadeIn 0.6s ease forwards;
+    }
+
+    .field-1 { animation-delay: 0.1s; }
+    .field-2 { animation-delay: 0.2s; }
+    .field-3 { animation-delay: 0.3s; }
+    .field-4 { animation-delay: 0.4s; }
+    .field-5 { animation-delay: 0.5s; }
+    .field-6 { animation-delay: 0.6s; }
+
+    /* User type field styling */
+    .user-type-selector {
+        margin-bottom: 1.5rem;
+    }
+
+    .role-info {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-content-wrapper">
+    <div class="form-container">
+        <div class="auth-card card">
+            <div class="card-header">
+                <h2 class="card-title">Create Your Account</h2>
+                <p class="text-muted mb-0 mt-2">Join TalentJet to start your journey</p>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate id="signupForm">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.name == 'company' %}
+                            <div class="form-group animate-field field-{{ forloop.counter }}" id="company-field-container" style="display: none;">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }} <span class="text-danger">*</span></label>
+                                {% if field.errors %}
+                                    <div class="errorlist">
+                                        {% for error in field.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text">{{ field.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        {% elif field.name == 'user_type' %}
+                            <div class="form-group animate-field field-{{ forloop.counter }} user-type-selector">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {% if field.errors %}
+                                    <div class="errorlist">
+                                        {% for error in field.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text">{{ field.help_text }}</small>
+                                {% endif %}
+                                <div class="role-info mt-2">
+                                    <div id="jobseeker-info">Job seekers can browse and apply for positions</div>
+                                    <div id="recruiter-info" style="display: none;">Recruiters can post jobs and manage applications</div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="form-group animate-field field-{{ forloop.counter }}">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {% if field.errors %}
+                                    <div class="errorlist">
+                                        {% for error in field.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text">{{ field.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn submit-btn animate-field field-6">Sign Up</button>
+                </form>
+                <div class="mt-4 text-center animate-field field-6">
+                    Already have an account? <a href="{% url 'login' %}" class="auth-link">Log in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add class to form controls for styling
+        const formControls = document.querySelectorAll('#signupForm input:not([type="hidden"]), #signupForm select');
+        formControls.forEach(element => {
+            element.classList.add('form-control');
+        });
+
+        // Add focus animations
+        const formFields = document.querySelectorAll('.form-control');
+        formFields.forEach(field => {
+            field.addEventListener('focus', function() {
+                this.closest('.form-group').classList.add('focused');
+                const label = this.closest('.form-group').querySelector('.form-label');
+                if (label) label.style.color = '#000';
+            });
+
+            field.addEventListener('blur', function() {
+                this.closest('.form-group').classList.remove('focused');
+                const label = this.closest('.form-group').querySelector('.form-label');
+                if (label) label.style.color = '';
+            });
+        });
+
+        // Show/hide company field based on user type selection
+        const userTypeField = document.querySelector('select[name="user_type"]');
+        const companyFieldContainer = document.getElementById('company-field-container');
+        const jobseekerInfo = document.getElementById('jobseeker-info');
+        const recruiterInfo = document.getElementById('recruiter-info');
+
+        // Debug the user type field
+        console.log("User type field:", userTypeField);
+        console.log("Company container:", companyFieldContainer);
+
+        // Make sure we immediately check the field value
+        if (userTypeField && companyFieldContainer) {
+            // Initial check - call immediately when page loads
+            toggleCompanyField();
+
+            // Add change event listener
+            userTypeField.addEventListener('change', toggleCompanyField);
+
+            function toggleCompanyField() {
+                console.log("Current user type value:", userTypeField.value);
+
+                // Improved check for recruiter/employer roles
+                if (userTypeField.value && (
+                    userTypeField.value.toLowerCase() === 'recruiter' ||
+                    userTypeField.value.toLowerCase() === 'employer'
+                )) {
+                    // Show company field and recruiter info
+                    companyFieldContainer.style.display = 'block';
+                    if (jobseekerInfo) jobseekerInfo.style.display = 'none';
+                    if (recruiterInfo) recruiterInfo.style.display = 'block';
+
+                    // Make company field required for recruiters
+                    const companyField = companyFieldContainer.querySelector('input');
+                    if (companyField) {
+                        companyField.setAttribute('required', 'required');
+                    }
+                } else {
+                    // Hide company field and show jobseeker info
+                    companyFieldContainer.style.display = 'none';
+                    if (jobseekerInfo) jobseekerInfo.style.display = 'block';
+                    if (recruiterInfo) recruiterInfo.style.display = 'none';
+
+                    // Remove required attribute for non-recruiters
+                    const companyField = companyFieldContainer.querySelector('input');
+                    if (companyField) {
+                        companyField.removeAttribute('required');
+                    }
+                }
+            }
+        } else {
+            console.error("Could not find user type field or company container");
+        }
+    });
+</script>
+{% endblock %}

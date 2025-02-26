@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications | TalentJet{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">My Job Applications</h2>
+    </div>
+    <div class="card-body">
+        {% if applications %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Applied On</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td><a href="{% url 'job_detail' application.job.pk %}">{{ application.job.title }}</a></td>
+                            <td>{{ application.job.recruiter.username }}</td>
+                            <td>{{ application.applied_at|date:"F d, Y" }}</td>
+                            <td>
+                                {% if application.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif application.status == 'accepted' %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif application.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You haven't applied to any jobs yet.</p>
+            <p><a href="{% url 'job_list' %}" class="btn btn-primary">Browse Available Jobs</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

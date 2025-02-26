@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Home | TalentJet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/simple-search.css' %}">
+<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero section -->
+<div class="hero-section">
+    <div class="search-container">
+        <h1 class="hero-title">Find Your Dream Job</h1>
+        <p class="hero-subtitle">Search through thousands of jobs from top companies</p>
+
+        <!-- Simple search bar inspired by StackOverflow example -->
+        <form method="get" action="{% url 'search_results' %}" class="search-bar">
+            <input type="text"
+                   class="search-text"
+                   placeholder="Try 'Python Developer' or 'Marketing Manager'"
+                   name="q"
+                   id="searchInput">
+            <button type="submit" class="search-button">
+                <svg class="search-icon" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.39zM11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7z" fill="currentColor"/>
+                </svg>
+                Search
+            </button>
+        </form>
+
+        <div class="popular-searches">
+            Popular:
+            <a href="{% url 'search_results' %}?q=software engineer">Software Engineer</a>
+            <a href="{% url 'search_results' %}?q=data scientist">Data Scientist</a>
+            <a href="{% url 'search_results' %}?q=product manager">Product Manager</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="content-section" id="mainContent">
+    <div class="container mt-5">
+
+        {% if results %}
+            <h2>Search Results</h2>
+            <ul>
+                {% for result in results %}
+                    <li>{{ result }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Job Seekers</h3>
+                            <p class="card-text">Find your dream job with just one click</p>
+                            <a href="{% url 'job_list' %}" class="btn btn-primary">Browse Jobs</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Recruiters</h3>
+                            <p class="card-text">Post jobs and find the perfect candidates</p>
+                            {% if user.is_authenticated and user.role == 'recruiter' %}
+                                <a href="{% url 'create_job' %}" class="btn btn-primary">Post a Job</a>
+                            {% else %}
+                                <a href="{% url 'signup' %}" class="btn btn-primary">Register as Recruiter</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
