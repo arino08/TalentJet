@@ -1,40 +1,203 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Profile | TalentJet{% endblock %}
+{% block title %}My Profile | TalentJet{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">User Profile</h2>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <p><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Role:</strong> {{ user.get_role_display }}</p>
-                {% if user.role == 'recruiter' %}
-                    <p><strong>Company:</strong> {{ user.company }}</p>
-                {% elif user.role == 'job_seeker' %}
-                    <p><strong>Experience:</strong> {{ user.experience }}</p>
-                {% endif %}
-                <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+<div class="container my-5">
+    <div class="row">
+        <!-- Profile Header -->
+        <div class="col-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">My Profile</h1>
+                <a href="{% url 'profile_update' %}" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
             </div>
-            <div class="col-md-8">
-                <h3>Edit Profile</h3>
-                <form method="post">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            {{ field }}
-                            {{ field.errors }}
+            <hr>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Personal Information</h5>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Name:</strong>
                         </div>
-                    {% endfor %}
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
-                </form>
+                        <div class="col-sm-8">
+                            {{ user.get_full_name|default:user.username }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Email:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ user.email }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Role:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ user.get_role_display }}
+                        </div>
+                    </div>
+                    {% if user.profile.location %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Location:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ user.profile.location }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.profile.phone %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Phone:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ user.profile.phone }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if user.role == 'job_seeker' %}
+            <!-- Job Seeker Specific Information -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Professional Information</h5>
+                    {% if user.profile.skills %}
+                    <div class="mb-4">
+                        <h6>Skills</h6>
+                        <div class="skills-tags">
+                            {% for skill in user.profile.skills.split %}
+                            <span class="badge bg-light text-dark me-2 mb-2">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if user.profile.resume %}
+                    <div class="mt-4">
+                        <h6>Resume</h6>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-file-pdf me-2"></i>
+                            <a href="{{ user.profile.resume.url }}" target="_blank" class="me-3">View Resume</a>
+                            <form method="post" action="{% url 'delete_resume' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash-alt me-1"></i>Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user.role == 'recruiter' %}
+            <!-- Recruiter Specific Information -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Company Information</h5>
+                    {% if user.company_name %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Company:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ user.company_name }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.company_website %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Website:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <a href="{{ user.company_website }}" target="_blank">{{ user.company_website }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.company_description %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>About:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ user.company_description|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Recent Activity -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Recent Activity</h5>
+                    {% if user.role == 'job_seeker' %}
+                        <a href="{% url 'my_applications' %}" class="btn btn-outline-dark w-100 mb-3">
+                            <i class="fas fa-list me-2"></i>My Applications
+                        </a>
+                    {% else %}
+                        <a href="{% url 'manage_applications' %}" class="btn btn-outline-dark w-100 mb-3">
+                            <i class="fas fa-briefcase me-2"></i>Manage Jobs
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border: none;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+        color: #333;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background-color: #000;
+        border-color: #000;
+    }
+
+    .btn-primary:hover {
+        background-color: #333;
+        border-color: #333;
+    }
+
+    .skills-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .badge {
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+    }
+</style>
 {% endblock %}

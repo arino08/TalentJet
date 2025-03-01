@@ -23,4 +23,7 @@ urlpatterns = [
 	path('login/', views.login_view, name='login'),
 	path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
 	path('profile/', views.profile, name='profile'),
+	path('resume/delete/', views.delete_resume, name='delete_resume'),
+	path('profile/update/', views.profile_update, name='profile_update'),
+	path('profile/resume/delete/', views.delete_resume, name='delete_resume'),
 ]

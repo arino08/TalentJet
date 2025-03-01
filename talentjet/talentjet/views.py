@@ -1,48 +1,67 @@
 from django.shortcuts import render
+from django.db.models import Q, Count
 from jobs.models import Job
-from users.models import CustomUser
-from django.db.models import Q
+from django.db.models.functions import Lower
 
 def home(request):
-    return render(request, 'home.html')
+    # Get companies with job counts
+    top_companies = Job.objects.values('company') \
+                              .annotate(job_count=Count('id')) \
+                              .order_by('-job_count')[:10]
+
+    # Format company data for template
+    company_data = []
+    for company in top_companies:
+        company_name = company['company']
+        if company_name:  # Skip empty company names
+            company_data.append({
+                'name': company_name,
+                'job_count': company['job_count'],
+                'logo_url': None,  # You can improve this by adding logo handling
+            })
+
+    # If there are fewer than 5 companies, add some placeholders
+    if len(company_data) < 5:
+        sample_companies = [
+            {'name': 'TechCorp', 'job_count': 12},
+            {'name': 'GlobalSoft', 'job_count': 8},
+            {'name': 'InnovateTech', 'job_count': 15},
+            {'name': 'DataDynamics', 'job_count': 7},
+            {'name': 'FutureSystems', 'job_count': 10}
+        ]
+
+        # Add needed number of sample companies
+        for i in range(min(5 - len(company_data), len(sample_companies))):
+            company_data.append({
+                'name': sample_companies[i]['name'],
+                'job_count': sample_companies[i]['job_count'],
+                'logo_url': None
+            })
+
+    return render(request, 'home.html', {'top_companies': company_data})
 
 def search_results(request):
-    query = request.GET.get('q', '')
-    job_type = request.GET.get('job_type', '')
-    experience_level = request.GET.get('experience_level', '')
-    location = request.GET.get('location', '')
+    """
+    Search view that processes query parameters and returns matching jobs
+    """
+    search_query = request.GET.get('q', '')
 
-    jobs = Job.objects.all()
-    companies = CustomUser.objects.filter(role='recruiter')
-
-    if query:
-        jobs = jobs.filter(
-            Q(title__icontains=query) |
-            Q(description__icontains=query) |
-            Q(required_skills__icontains=query)
-        )
-        companies = companies.filter(
-            Q(company__icontains=query) |
-            Q(posted_jobs__required_skills__icontains=query)
-        ).distinct()
-
-    if job_type:
-        jobs = jobs.filter(job_type=job_type)
-
-    if experience_level:
-        jobs = jobs.filter(experience_level=experience_level)
-
-    if location:
-        jobs = jobs.filter(location__icontains=location)
+    if search_query:
+        # Search across multiple fields
+        results = Job.objects.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(company__icontains=search_query) |
+            Q(location__icontains=search_query) |
+            Q(required_skills__icontains=search_query)
+        ).order_by('-posted_at')
+    else:
+        # If no query, show all jobs
+        results = Job.objects.all().order_by('-posted_at')
 
     context = {
-        'query': query,
-        'jobs': jobs,
-        'companies': companies,
-        'job_type': job_type,
-        'experience_level': experience_level,
-        'location': location,
-        'total_results': jobs.count(),
+        'search_query': search_query,
+        'results': results,
     }
 
-    return render(request, 'search_results.html', context)
+    return render(request, 'search/search_results.html', context)

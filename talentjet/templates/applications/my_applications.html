@@ -1,46 +1,233 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}My Applications | TalentJet{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
+<style>
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        margin-top: 3rem;
+    }
+
+    .applications-card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+        margin-bottom: 2rem;
+    }
+
+    .applications-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        padding: 1.5rem 2rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0;
+        color: #111;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        border-top: none;
+        border-bottom: 2px solid #f0f0f0;
+        color: #555;
+        font-weight: 600;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .table tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .table-row {
+        opacity: 0;
+        animation: fadeIn 0.6s ease forwards;
+    }
+
+    .badge {
+        padding: 0.5rem 0.8rem;
+        font-weight: 500;
+        border-radius: 30px;
+    }
+
+    .badge.bg-warning {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+    }
+
+    .badge.bg-success {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
+
+    .badge.bg-danger {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-text {
+        font-size: 1.1rem;
+        color: #777;
+        margin-bottom: 2rem;
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .job-link {
+        color: #000;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .job-link:hover {
+        color: #555;
+        text-decoration: underline;
+    }
+
+    .company-name {
+        color: #555;
+    }
+
+    .apply-date {
+        color: #777;
+    }
+
+    .btn-search {
+        background-color: #000;
+        border-color: #000;
+        color: #fff;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-search:hover {
+        background-color: #333;
+        border-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Added animation delay for staggered effect */
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">My Job Applications</h2>
-    </div>
-    <div class="card-body">
-        {% if applications %}
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Job Title</th>
-                        <th>Company</th>
-                        <th>Applied On</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for application in applications %}
-                        <tr>
-                            <td><a href="{% url 'job_detail' application.job.pk %}">{{ application.job.title }}</a></td>
-                            <td>{{ application.job.recruiter.username }}</td>
-                            <td>{{ application.applied_at|date:"F d, Y" }}</td>
-                            <td>
-                                {% if application.status == 'pending' %}
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                {% elif application.status == 'accepted' %}
-                                    <span class="badge bg-success">Accepted</span>
-                                {% elif application.status == 'rejected' %}
-                                    <span class="badge bg-danger">Rejected</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>You haven't applied to any jobs yet.</p>
-            <p><a href="{% url 'job_list' %}" class="btn btn-primary">Browse Available Jobs</a></p>
-        {% endif %}
+<div class="page-container">
+    <div class="applications-card card">
+        <div class="card-header">
+            <h2 class="card-title">My Applications</h2>
+            <p class="text-muted mb-0 mt-2">Track the status of your job applications</p>
+        </div>
+        <div class="card-body">
+            {% if applications %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                                <tr class="table-row delay-{{ forloop.counter0|add:1|divisibleby:6|yesno:'6,_' }}{{ forloop.counter0|add:1|divisibleby:5|yesno:'5,_' }}{{ forloop.counter0|add:1|divisibleby:4|yesno:'4,_' }}{{ forloop.counter0|add:1|divisibleby:3|yesno:'3,_' }}{{ forloop.counter0|add:1|divisibleby:2|yesno:'2,_' }}{{ forloop.counter0|add:1|divisibleby:1|yesno:'1,_' }}">
+                                    <td><a href="{% url 'job_detail' application.job.pk %}" class="job-link">{{ application.job.title }}</a></td>
+                                    <td class="company-name">{{ application.job.company }}</td>
+                                    <td class="apply-date">{{ application.applied_at|date:"F d, Y" }}</td>
+                                    <td>
+                                        {% if application.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% elif application.status == 'accepted' %}
+                                            <span class="badge bg-success">Accepted</span>
+                                        {% elif application.status == 'rejected' %}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>No Applications Yet</h3>
+                    <p class="empty-state-text">You haven't applied for any jobs yet.</p>
+                    <a href="{% url 'job_list' %}" class="btn btn-search">
+                        <i class="fas fa-search me-2"></i> Find Jobs to Apply
+                    </a>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to table rows
+        const rows = document.querySelectorAll('.table-row');
+        // Animation delay is handled with CSS classes now
+    });
+</script>
 {% endblock %}

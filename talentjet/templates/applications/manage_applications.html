@@ -1,56 +1,499 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Manage Applications | TalentJet{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
+<style>
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        margin-top: 3rem;
+    }
+
+    .applications-card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+        margin-bottom: 2rem;
+    }
+
+    .applications-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        padding: 1.5rem 2rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0;
+        color: #111;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        border-top: none;
+        border-bottom: 2px solid #f0f0f0;
+        color: #555;
+        font-weight: 600;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .table tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .table-row {
+        opacity: 0;
+        animation: fadeIn 0.6s ease forwards;
+    }
+
+    .badge {
+        padding: 0.5rem 0.8rem;
+        font-weight: 500;
+        border-radius: 30px;
+    }
+
+    .badge.bg-warning {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+    }
+
+    .badge.bg-success {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
+
+    .badge.bg-danger {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+    }
+
+    .btn-group .btn {
+        border-radius: 6px;
+        margin-right: 0.25rem;
+        transition: all 0.3s ease;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .btn-success {
+        background-color: #000;
+        border-color: #000;
+    }
+
+    .btn-success:hover {
+        background-color: #333;
+        border-color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-danger {
+        background-color: #444;
+        border-color: #444;
+    }
+
+    .btn-danger:hover {
+        background-color: #666;
+        border-color: #666;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-text {
+        font-size: 1.1rem;
+        color: #777;
+        margin-bottom: 2rem;
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .job-link {
+        color: #000;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .job-link:hover {
+        color: #555;
+        text-decoration: underline;
+    }
+
+    .applicant-name {
+        font-weight: 500;
+    }
+
+    .apply-date {
+        color: #777;
+    }
+
+    /* Added animation delay for staggered effect */
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+
+    /* Applicant profile modal styling */
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        background-color: #fff;
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: #111;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid rgba(0,0,0,0.08);
+        background-color: #f9f9f9;
+        padding: 1rem 1.5rem;
+    }
+
+    .profile-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-section-title {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .profile-info {
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-info-label {
+        font-weight: 500;
+        color: #555;
+    }
+
+    .resume-preview {
+        background-color: #f9f9f9;
+        border-radius: 6px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    .resume-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        color: #444;
+    }
+
+    .view-profile-link {
+        color: #000;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .view-profile-link:hover {
+        color: #444;
+    }
+
+    .view-profile-link i {
+        margin-left: 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    .experience-content {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 1rem;
+        white-space: pre-line;
+        margin-top: 0.5rem;
+    }
+
+    .no-experience {
+        color: #777;
+        font-style: italic;
+    }
+
+    /* Performance optimizations */
+    .modal {
+        will-change: opacity;
+        backface-visibility: hidden;
+    }
+
+    .modal-content {
+        will-change: transform;
+        transition: transform 0.2s ease-out;
+    }
+
+    /* Fix for modal layout issues */
+    .profile-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .profile-col {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 15px;
+    }
+
+    @media (max-width: 767px) {
+        .profile-col {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">Manage Job Applications</h2>
-    </div>
-    <div class="card-body">
-        {% if applications %}
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Job Title</th>
-                        <th>Applicant</th>
-                        <th>Applied On</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for application in applications %}
-                        <tr>
-                            <td><a href="{% url 'job_detail' application.job.pk %}">{{ application.job.title }}</a></td>
-                            <td>{{ application.applicant.username }}</td>
-                            <td>{{ application.applied_at|date:"F d, Y" }}</td>
-                            <td>
-                                {% if application.status == 'pending' %}
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                {% elif application.status == 'accepted' %}
-                                    <span class="badge bg-success">Accepted</span>
-                                {% elif application.status == 'rejected' %}
-                                    <span class="badge bg-danger">Rejected</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if application.status == 'pending' %}
-                                <div class="btn-group" role="group">
-                                  <a href="{% url 'accept_application' application.id %}" class="btn btn-sm btn-success">Accept</a>
-                                  <a href="{% url 'reject_application' application.id %}" class="btn btn-sm btn-danger">Reject</a>
-                                </div>
-                                {% else %}
-                                <span class="text-muted">Processed</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No applications to manage.</p>
-        {% endif %}
-    </div>
+<div class="page-container">
+    <div class="applications-card card">
+        <div class="card-header">
+<h2 class="card-title">Manage Job Applications</h2>
+<p class="text-muted mb-0 mt-2">Review and respond to candidate applications</p>
 </div>
+<div class="card-body">
+{% if applications %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Job Title</th>
+          <th>Applicant</th>
+          <th>Applied On</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in applications %}
+          <tr class="table-row delay-{{ forloop.counter0|add:1|divisibleby:6|yesno:'6,_' }}{{ forloop.counter0|add:1|divisibleby:5|yesno:'5,_' }}{{ forloop.counter0|add:1|divisibleby:4|yesno:'4,_' }}{{ forloop.counter0|add:1|divisibleby:3|yesno:'3,_' }}{{ forloop.counter0|add:1|divisibleby:2|yesno:'2,_' }}{{ forloop.counter0|add:1|divisibleby:1|yesno:'1,_' }}">
+            <td><a href="{% url 'job_detail' application.job.pk %}" class="job-link">{{ application.job.title }}</a></td>
+            <td>
+              <a href="#" class="applicant-name view-profile-link" data-bs-toggle="modal" data-bs-target="#applicantModal{{ application.id }}">
+                {{ application.applicant.username }}
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </td>
+            <td class="apply-date">{{ application.applied_at|date:"F d, Y" }}</td>
+            <td>
+              {% if application.status == 'pending' %}
+                <span class="badge bg-warning">Pending</span>
+              {% elif application.status == 'accepted' %}
+                <span class="badge bg-success">Accepted</span>
+              {% elif application.status == 'rejected' %}
+                <span class="badge bg-danger">Rejected</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if application.status == 'pending' %}
+              <div class="btn-group" role="group">
+                <a href="{% url 'accept_application' application.id %}" class="btn btn-sm btn-success">Accept</a>
+                <a href="{% url 'reject_application' application.id %}" class="btn btn-sm btn-danger">Reject</a>
+              </div>
+              {% else %}
+              <span class="text-muted">Processed</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Profile Modals - Separated from table for better performance -->
+  {% for application in applications %}
+    <div class="modal fade" id="applicantModal{{ application.id }}" tabindex="-1" aria-labelledby="applicantModalLabel{{ application.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="applicantModalLabel{{ application.id }}">
+              {{ application.applicant.get_full_name|default:application.applicant.username }}'s Profile
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Basic Information -->
+            <div class="profile-section">
+              <h6 class="profile-section-title">Basic Information</h6>
+              <div class="profile-row">
+                <div class="profile-col">
+                  <div class="profile-info">
+                    <span class="profile-info-label">Username:</span>
+                    {{ application.applicant.username }}
+                  </div>
+                  <div class="profile-info">
+                    <span class="profile-info-label">Email:</span>
+                    {{ application.applicant.email }}
+                  </div>
+                </div>
+                <div class="profile-col">
+                  <div class="profile-info">
+                    <span class="profile-info-label">Name:</span>
+                    {{ application.applicant.get_full_name|default:"Not provided" }}
+                  </div>
+                  <div class="profile-info">
+                    <span class="profile-info-label">Account Type:</span>
+                    {{ application.applicant.role|title }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Experience Section -->
+            <div class="profile-section">
+              <h6 class="profile-section-title">Professional Experience</h6>
+              {% if application.applicant.experience %}
+                <div class="experience-content">
+                  {{ application.applicant.experience|linebreaks }}
+                </div>
+              {% else %}
+                <p class="no-experience">No experience information provided.</p>
+              {% endif %}
+            </div>
+
+            <!-- Resume Section -->
+            <div class="profile-section">
+              <h6 class="profile-section-title">Resume</h6>
+              {% if application.applicant.profile.resume %}
+                <div class="resume-preview">
+                  <div class="resume-icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </div>
+                  <div>
+                    <div>{{ application.applicant.profile.resume.name|slice:"8:" }}</div>
+                    <a href="{{ application.applicant.profile.resume.url }}" class="btn btn-sm btn-outline-dark mt-2" target="_blank">
+                      <i class="fas fa-eye me-1"></i> View Resume
+                    </a>
+                    <a href="{{ application.applicant.profile.resume.url }}" class="btn btn-sm btn-outline-dark mt-2 ms-2" download>
+                      <i class="fas fa-download me-1"></i> Download
+                    </a>
+                  </div>
+                </div>
+              {% else %}
+                <p class="no-experience">No resume uploaded.</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">
+      <i class="fas fa-inbox"></i>
+    </div>
+    <h3>No Applications Yet</h3>
+    <p class="empty-state-text">When candidates apply to your job postings, they will appear here.</p>
+  </div>
+{% endif %}
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Add animation to table rows
+const rows = document.querySelectorAll('.table-row');
+rows.forEach((row, index) => {
+// Using inline delay classes now, but we could also do it here:
+// row.style.animationDelay = `${0.1 * (index % 6 + 1)}s`;
+});
+
+// Enhanced hover effect for buttons
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(button => {
+button.addEventListener('mouseover', function() {
+  this.style.transform = 'translateY(-2px)';
+});
+button.addEventListener('mouseout', function() {
+  this.style.transform = '';
+});
+});
+
+// Modal optimization for better performance
+const profileLinks = document.querySelectorAll('.view-profile-link');
+profileLinks.forEach(link => {
+link.addEventListener('click', function(e) {
+  const targetId = this.getAttribute('data-bs-target');
+  const modal = document.querySelector(targetId);
+
+  // Prevent loading until modal is actually shown
+  if (modal) {
+    // Apply optimization when modal is shown
+    modal.addEventListener('shown.bs.modal', function() {
+      // Force GPU acceleration
+      this.style.transform = 'translateZ(0)';
+    }, {once: true});
+  }
+});
+});
+});
+</script>
 {% endblock %}

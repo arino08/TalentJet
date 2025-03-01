@@ -30,6 +30,59 @@
             filter: none !important;
             -webkit-filter: none !important;
         }
+
+        /* Global spacing fix for all pages */
+        body {
+            padding-top: 60px; /* Adjust based on your navbar height */
+        }
+
+        /* Fix for fixed navbar - ALWAYS VISIBLE */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1030;
+            opacity: 1 !important; /* Force visibility */
+            transform: translateY(0) !important; /* Prevent hiding via transform */
+            transition: box-shadow 0.3s ease !important; /* Only animate shadow */
+        }
+
+        /* Ensure content doesn't get hidden */
+        .container-fluid, .container {
+            padding-top: 1rem;
+        }
+
+        /* Remove padding for hero sections that need to be flush with navbar */
+        .hero-section {
+            margin-top: -60px; /* Negates the body padding for hero sections */
+        }
+
+        /* Navbar brand styling */
+        .navbar-brand {
+            font-weight: 700;
+            color: #000 !important; /* Ensure visibility */
+        }
+
+        /* Fix for any issues with navbar-light mode */
+        .navbar-light .navbar-nav .nav-link {
+            color: rgba(0,0,0,0.7);
+        }
+
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: rgba(0,0,0,1);
+        }
+
+        /* Emergency fix for navbar visibility */
+        .navbar {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1030 !important;
+            background-color: #fff !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
     </style>
     <!-- Your custom CSS -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -40,10 +93,11 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top"
+         style="display:block !important; visibility:visible !important; opacity:1 !important; position:fixed !important;">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="fas fa-briefcase text-white me-2"></i>
+                <i class="fas fa-briefcase text-black me-2"></i>
                 TalentJet
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -115,9 +169,19 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Ensure navbar is always visible -->
+    <script>
+        // Immediate execution to show navbar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force navbar visibility
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                navbar.style.display = 'block';
+                navbar.style.visibility = 'visible';
+                navbar.style.opacity = '1';
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
-    <!-- Add this before the closing body tag -->
-<script src="{% static 'js/navbar-scroll.js' %}"></script>
-
 </body>
 </html>

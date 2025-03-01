@@ -1,44 +1,80 @@
-/* Monochromatic navbar styling */
+/* Monochrome Navbar Styles */
 
-/* Navbar base style */
+/* Base navbar styling */
 .navbar {
-  background-color: transparent !important;
-  transition: background-color 0.3s ease;
-  padding: 1.2rem 0;
+    background-color: white;
+    border-bottom: 1px solid #eaeaea;
+    padding: 0.75rem 1rem;
+    /* Ensure navbar is always visible */
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    transition: box-shadow 0.3s ease;
 }
 
-/* Scrolled state */
-.navbar.scrolled {
-  background-color: rgba(18, 18, 18, 0.98) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Brand styling */
+/* Navbar brand styling */
 .navbar-brand {
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: white !important;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #000;
 }
 
-/* Nav links */
+/* Navbar links */
 .navbar-light .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.85) !important;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  transition: color 0.2s ease;
+    color: #333;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
 }
 
-.navbar-light .navbar-nav .nav-link:hover {
-  color: white !important;
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus {
+    color: #000;
 }
 
-/* Toggler icon for mobile */
-.navbar-light .navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.3);
+/* Active link */
+.navbar-light .navbar-nav .nav-link.active {
+    color: #000;
+    font-weight: 600;
 }
 
-.navbar-light .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+/* Dropdown styling */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 0.5rem;
 }
 
-/* Add scroll detection JavaScript */
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f8f8;
+}
+
+/* Navbar toggler for mobile */
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+/* Mobile view adjustments */
+@media (max-width: 992px) {
+    .navbar-collapse {
+        padding: 1rem 0;
+    }
+
+    .navbar-nav {
+        margin-bottom: 1rem;
+    }
+}

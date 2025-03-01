@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile | TalentJet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
+<style>
+    /* Keep existing styles */
+    /* ... */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-content-wrapper">
+    <div class="profile-container">
+        <!-- Profile Information Card -->
+        <!-- ... -->
+
+        <!-- Experience Section (only for job seekers) -->
+        <!-- ... -->
+
+        <!-- Resume Section (only for job seekers) -->
+        {% if user.role == 'job_seeker' %}
+        <div class="profile-card card">
+            <div class="card-header">
+                <h2 class="card-title">Resume</h2>
+                <p class="text-muted mb-0 mt-2">Upload your resume to apply for jobs easily</p>
+            </div>
+            <div class="card-body">
+                {% if profile.resume %}
+                <!-- Show existing resume details -->
+                {% endif %}
+
+                <!-- Important: Fix for the file upload form -->
+                <form method="post" enctype="multipart/form-data" id="resumeUploadForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="resume_upload" value="1">
+
+                    <div class="file-drop-zone" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="file-drop-text">Drag and drop your resume here</div>
+                        <div class="file-drop-hint">or click to browse files</div>
+                        <div class="mt-3 d-none" id="selectedFileName"></div>
+                    </div>
+
+                    <div class="mt-3">
+                        {{ resume_form.resume.errors }}
+                        <!-- Important: Make file input visible but positioned outside viewport -->
+                        <div style="position: absolute; left: -9999px;">
+                            {{ resume_form.resume }}
+                        </div>
+                        <small class="form-text text-muted">{{ resume_form.resume.help_text }}</small>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="submit" class="btn upload-btn">
+                            <i class="fas fa-upload me-2"></i> Upload Resume
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Resume Modal -->
+<!-- ... -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.querySelector('#resumeUploadForm input[type="file"]');
+        const selectedFileName = document.getElementById('selectedFileName');
+
+        console.log("File input element:", fileInput); // Debug output
+
+        // Only set up file upload if the elements exist
+        if (dropZone && fileInput) {
+            // Handle drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            // Add visual feedback
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, function() {
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, function() {
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+
+            // Handle file drop
+            dropZone.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    selectedFileName.textContent = `Selected file: ${files[0].name}`;
+                    selectedFileName.classList.remove('d-none');
+                }
+            }, false);
+
+            // Click to upload - this is the critical part
+            dropZone.addEventListener('click', function() {
+                console.log("Drop zone clicked");
+                fileInput.click();  // This triggers the file dialog
+            });
+
+            // Update UI when file selected
+            fileInput.addEventListener('change', function() {
+                console.log("File input changed");
+                if (this.files.length > 0) {
+                    selectedFileName.textContent = `Selected file: ${this.files[0].name}`;
+                    selectedFileName.classList.remove('d-none');
+                }
+            });
+        }
+
+        // Experience management
+        // ...
+    });
+</script>
+{% endblock %}

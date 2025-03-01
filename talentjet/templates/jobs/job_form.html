@@ -1,190 +1,37 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block title %}Post a Job | TalentJet{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
-<style>
-    .form-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 2rem;
-        margin-top: 2rem;
-    }
-
-    .page-content-wrapper {
-        padding-top: 1.5rem;
-    }
-
-    .job-form-card {
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        border-radius: 12px;
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        background-color: #fff;
-    }
-
-    .job-form-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    }
-
-    .card-header {
-        background-color: #fff;
-        border-bottom: 1px solid rgba(0,0,0,0.08);
-        padding: 1.5rem 2rem;
-    }
-
-    .card-title {
-        font-size: 1.75rem;
-        font-weight: 600;
-        margin: 0;
-        color: #111;
-    }
-
-    .card-body {
-        padding: 2rem;
-    }
-
-    .form-label {
-        font-weight: 500;
-        margin-bottom: 0.75rem;
-        font-size: 0.95rem;
-        color: #333;
-        transition: color 0.3s ease;
-    }
-
-    .form-control {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 12px 16px;
-        transition: all 0.3s ease;
-        box-shadow: none;
-        background-color: #f9f9f9;
-        color: #222;
-    }
-
-    .form-control:focus {
-        border-color: #333;
-        box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
-        outline: none;
-        background-color: #fff;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .form-text {
-        font-size: 0.8rem;
-        margin-top: 0.5rem;
-        color: #666;
-    }
-
-    .submit-btn {
-        background-color: #000;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 28px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
-        width: 100%;
-        color: #fff;
-    }
-
-    .submit-btn:hover {
-        background-color: #333;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    /* Animation for form fields */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .animate-field {
-        animation: fadeIn 0.6s ease forwards;
-    }
-
-    .field-1 { animation-delay: 0.1s; }
-    .field-2 { animation-delay: 0.2s; }
-    .field-3 { animation-delay: 0.3s; }
-    .field-4 { animation-delay: 0.4s; }
-    .field-5 { animation-delay: 0.5s; }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="page-content-wrapper">
-    <div class="form-container">
-        <div class="job-form-card card">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
             <div class="card-header">
                 <h2 class="card-title">Post a New Job</h2>
-                <p class="text-muted mb-0 mt-2">Fill in the form below to create a job posting</p>
             </div>
             <div class="card-body">
-                <form method="post" novalidate id="jobForm">
+                <form method="post" novalidate>
                     {% csrf_token %}
+
                     {% for field in form %}
-                        <div class="form-group animate-field field-{{ forloop.counter }}">
+                        <div class="mb-3">
                             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            {% if field.errors %}
-                                <div class="errorlist">
-                                    {% for error in field.errors %}
-                                        <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                            {{ field.errors }}
                             {% if field.name == 'description' %}
-                                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" rows="6" placeholder="Enter job description...">{{ field.value|default:'' }}</textarea>
+                                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" rows="5">{{ field.value|default:'' }}</textarea>
                             {% else %}
-                                {{ field|safe }}
+                                {{ field }}
                             {% endif %}
                             {% if field.help_text %}
-                                <small class="form-text">{{ field.help_text }}</small>
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
                             {% endif %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="btn submit-btn">Post Job</button>
+
+                    <button type="submit" class="btn btn-primary">Post Job</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add class to form controls for styling
-        const formControls = document.querySelectorAll('#jobForm input:not([type="hidden"]), #jobForm select');
-        formControls.forEach(element => {
-            element.classList.add('form-control');
-        });
-
-        // Add focus animations
-        const formFields = document.querySelectorAll('.form-control');
-        formFields.forEach(field => {
-            field.addEventListener('focus', function() {
-                this.closest('.form-group').classList.add('focused');
-                const label = this.closest('.form-group').querySelector('.form-label');
-                if (label) label.style.color = '#000';
-            });
-
-            field.addEventListener('blur', function() {
-                this.closest('.form-group').classList.remove('focused');
-                const label = this.closest('.form-group').querySelector('.form-label');
-                if (label) label.style.color = '';
-            });
-        });
-    });
-</script>
 {% endblock %}
