@@ -4,8 +4,8 @@
 {% block title %}Search Results: {{ search_query }} | TalentJet{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/monochrome.css' %}">
-<link rel="stylesheet" href="{% static 'css/search_results.css' %}">
+<link rel="stylesheet" href="{% static 'css/monochrome.css' %}?v=1.4">
+<link rel="stylesheet" href="{% static 'css/search_results.css' %}?v=1.4">
 {% endblock %}
 
 {% block content %}
@@ -35,7 +35,7 @@
             >
             <button type="submit" class="search-button">
                 <i class="fas fa-search"></i>
-                <span>Search</span>
+                <span></span>
             </button>
         </form>
     </div>
@@ -94,11 +94,16 @@
         </div>
     </div>
 
-    <!-- Results display -->
+    <!-- Results display - SIMPLIFIED to avoid custom filters -->
     {% if results %}
         <div class="results-grid" id="results-container">
             {% for result in results %}
-                <div class="result-card">
+                <div class="result-card"
+                     data-job-type="{{ result.job_type|lower|cut:" " }}"
+                     data-location="{{ result.location|default:"Remote" }}"
+                     data-salary="{{ result.salary|default:"0" }}"
+                     data-posted-at="{{ result.posted_at|date:'Y-m-d' }}"
+                     data-index="{{ forloop.counter }}">
                     <div class="card-body">
                         <div class="card-main">
                             <h3 class="card-title">
@@ -136,10 +141,11 @@
                                 {{ result.description|safe|truncatechars:150 }}
                             </div>
 
+                            <!-- Simplified skills display without custom filters -->
                             <div class="card-skills">
-                                {% for skill in result.required_skills.split|slice:":5" %}
-                                    <span class="card-skill">{{ skill }}</span>
-                                {% endfor %}
+                                {% if result.required_skills %}
+                                    <span class="card-skill">{{ result.required_skills }}</span>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -151,7 +157,7 @@
                     </div>
 
                     <div class="card-footer">
-                        <a href="{{ result.get_absolute_url }}" class="btn-apply">View Details</a>
+                        <a href="{% url 'job_detail' result.id %}" class="btn-apply">View Details</a>
                         <button class="btn-save" onclick="toggleSave(this, {{ result.id }})">
                             <i class="far fa-bookmark"></i>
                             <span>Save</span>
@@ -232,7 +238,6 @@
         // View toggle functionality
         const viewButtons = document.querySelectorAll('.view-button');
         const resultsContainer = document.getElementById('results-container');
-
         viewButtons.forEach(button => {
             button.addEventListener('click', function() {
                 // Remove active class from all buttons
@@ -344,10 +349,13 @@
             }
         });
 
-        // Apply filters function
+        // Apply filters function - CORRECTED to use data attributes instead of class names
         function applyFilters() {
             const activeFilters = Array.from(document.querySelectorAll('.filter-chip.active')).map(chip => chip.dataset.filter);
             const resultCards = document.querySelectorAll('.result-card');
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
 
             resultCards.forEach(card => {
                 // If "all" filter is active, show all cards
@@ -359,18 +367,31 @@
                 // Otherwise, apply specific filters
                 let shouldShow = false;
 
-                // Check if the job matches any active filter
-                // This is a simplified version - in a real app, you'd check actual job attributes
+                // Check if the job matches any active filter using data attributes
                 if (activeFilters.includes('fulltime') && card.dataset.jobType === 'full_time') {
                     shouldShow = true;
                 }
                 if (activeFilters.includes('parttime') && card.dataset.jobType === 'part_time') {
                     shouldShow = true;
                 }
-                if (activeFilters.includes('remote') && card.dataset.location === 'Remote') {
+                if (activeFilters.includes('remote') && (card.dataset.location === 'Remote' || card.dataset.location.toLowerCase().includes('remote'))) {
                     shouldShow = true;
                 }
-                // More filter conditions can be added here
+                if (activeFilters.includes('recentlyposted')) {
+                    const postedDate = new Date(card.dataset.postedAt);
+                    if (postedDate >= thirtyDaysAgo) {
+                        shouldShow = true;
+                    }
+                }
+                if (activeFilters.includes('highpaying')) {
+                    // Extract numbers from salary text
+                    const salaryText = card.dataset.salary || '0';
+                    const salaryValue = parseInt(salaryText.replace(/[^0-9]/g, ''));
+                    // Adjust threshold based on your salary ranges
+                    if (salaryValue > 50000) {
+                        shouldShow = true;
+                    }
+                }
 
                 card.style.display = shouldShow ? '' : 'none';
             });
@@ -426,8 +447,7 @@
             }, 3000);
         }
 
-        // Initialize with any default sorting or filtering
-        // For example, apply "all" filter by default
+        // Initialize with default "all" filter
         applyFilters();
     });
 </script>

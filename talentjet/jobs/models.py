@@ -28,7 +28,6 @@ class Job(models.Model):
 
     @property
     def display_date(self):
-        """Return the posted date for display"""
         return self.posted_at
 
     def __str__(self):
