@@ -219,7 +219,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-Project Link: [https://github.com/yourusername/talentjet](https://github.com/arino08/talentjet)
+Project Link: [https://github.com/arino08/talentjet](https://github.com/arino08/talentjet)
 
 ## Acknowledgements
 
