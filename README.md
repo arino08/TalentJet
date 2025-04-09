@@ -46,7 +46,7 @@ TalentJet is a comprehensive recruitment management system built with Django tha
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/talentjet.git
+   git clone https://github.com/arino08/talentjet.git
    cd talentjet
    ```
 
