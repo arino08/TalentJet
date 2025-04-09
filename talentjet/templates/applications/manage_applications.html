@@ -206,6 +206,39 @@
         background-color: #f9f9f9;
         padding: 1rem 1.5rem;
     }
+    /* Fix for modal flickering issues */
+    .modal.show {
+        pointer-events: auto;
+        z-index: 1050 !important;
+    }
+
+    .modal-backdrop.show {
+        z-index: 1040 !important;
+        pointer-events: none;
+    }
+
+    body.modal-open {
+        overflow: hidden;
+        padding-right: 0 !important; /* Prevents layout shift */
+    }
+
+    /* Additional fixes for modal flickering */
+    .modal-open {
+        pointer-events: auto !important;
+    }
+
+    .modal.show {
+        display: block !important;
+    }
+
+    .modal-static {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
 
     .profile-section {
         margin-bottom: 1.5rem;
@@ -459,41 +492,83 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-// Add animation to table rows
-const rows = document.querySelectorAll('.table-row');
-rows.forEach((row, index) => {
-// Using inline delay classes now, but we could also do it here:
-// row.style.animationDelay = `${0.1 * (index % 6 + 1)}s`;
-});
+    // Track which modal is currently shown
+    let currentModal = null;
+    let modalInstances = {};
 
-// Enhanced hover effect for buttons
-const buttons = document.querySelectorAll('.btn');
-buttons.forEach(button => {
-button.addEventListener('mouseover', function() {
-  this.style.transform = 'translateY(-2px)';
-});
-button.addEventListener('mouseout', function() {
-  this.style.transform = '';
-});
-});
+    // Initialize all modals once
+    document.querySelectorAll('.modal').forEach(modal => {
+        const modalId = modal.id;
+        modalInstances[modalId] = new bootstrap.Modal(modal, {
+            backdrop: 'static',  // Prevent closing on click outside
+            keyboard: false      // Prevent closing with keyboard
+        });
 
-// Modal optimization for better performance
-const profileLinks = document.querySelectorAll('.view-profile-link');
-profileLinks.forEach(link => {
-link.addEventListener('click', function(e) {
-  const targetId = this.getAttribute('data-bs-target');
-  const modal = document.querySelector(targetId);
+        // Clean up when modal is hidden
+        modal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-freeze');
+            currentModal = null;
+        });
+    });
 
-  // Prevent loading until modal is actually shown
-  if (modal) {
-    // Apply optimization when modal is shown
-    modal.addEventListener('shown.bs.modal', function() {
-      // Force GPU acceleration
-      this.style.transform = 'translateZ(0)';
-    }, {once: true});
-  }
-});
-});
+    // Handle profile link clicks
+    document.querySelectorAll('.view-profile-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const targetId = this.getAttribute('data-bs-target').substring(1); // Remove the #
+
+            // If we have a modal instance, use it
+            if (modalInstances[targetId]) {
+                // If a modal is already open, hide it first
+                if (currentModal) {
+                    modalInstances[currentModal].hide();
+                }
+
+                // Show the new modal
+                modalInstances[targetId].show();
+                currentModal = targetId;
+
+                // Add a class to prevent hover interactions
+                document.body.classList.add('modal-freeze');
+
+                // Force GPU acceleration for smoother rendering
+                document.getElementById(targetId).style.transform = 'translateZ(0)';
+            }
+        });
+    });
+
+    // Global event interceptor to prevent flickering
+    document.addEventListener('mouseover', function(e) {
+        if (currentModal) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }, true);
+
+    document.addEventListener('mouseenter', function(e) {
+        if (currentModal) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }, true);
+
+    document.addEventListener('mouseleave', function(e) {
+        if (currentModal) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }, true);
+
+    // Close modal only via the close button
+    document.querySelectorAll('.btn-close, button[data-bs-dismiss="modal"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (currentModal) {
+                modalInstances[currentModal].hide();
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

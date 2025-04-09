@@ -1,0 +1,47 @@
+/* Modal flickering prevention */
+.modal-freeze {
+    pointer-events: none !important;
+}
+
+.modal-freeze .modal {
+    pointer-events: auto !important;
+}
+
+.modal-freeze .modal-content {
+    pointer-events: auto !important;
+}
+
+/* Force hardware acceleration */
+.modal.show {
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Ensure modal stays visible */
+.modal.show {
+    display: block !important;
+}
+
+/* Prevent background interaction while modal is open */
+body.modal-open {
+    overflow: hidden;
+    padding-right: 0 !important;
+}
+
+/* Clear stacking context issues */
+.modal {
+    z-index: 1050 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+/* Ensure backdrop stays fixed */
+.modal-backdrop.show {
+    opacity: 0.5 !important;
+}
