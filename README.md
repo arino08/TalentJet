@@ -10,7 +10,7 @@ TalentJet is a comprehensive recruitment management system built with Django tha
 
 - **Backend**: Django 4.2
 - **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
-- **Database**: PostgreSQL
+- **Database**: SQLite
 - **Authentication**: Django Authentication System
 - **File Storage**: Django FileField for resume storage
 - **Responsive Design**: Bootstrap responsive grid system
