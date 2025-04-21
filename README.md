@@ -40,7 +40,6 @@ TalentJet is a comprehensive recruitment management system built with Django tha
 - Python 3.8+
 - pip (Python package manager)
 - Git
-- PostgreSQL
 
 ### Installation Steps
 
